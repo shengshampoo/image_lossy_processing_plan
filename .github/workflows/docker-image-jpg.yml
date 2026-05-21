@@ -1,0 +1,35 @@
+name: Docker Image CI - X86_64/AARCH64 for Alpine Linux
+
+on:
+  # run it manually
+  workflow_dispatch:    
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: |
+       curl -sL https://github.com/shengshampoo/mozjpeg_program_static/releases/download/continuous/guetzlimm-${{ runner.os }}-${{ runner.arch }}.tar.xz | tar vx --xz
+       curl -sL https://github.com/shengshampoo/mozjpeg_program_static/releases/download/continuous/mozjpegmm-${{ runner.os }}-${{ runner.arch }}.tar.xz | tar vx --xz
+       curl -sL https://github.com/shengshampoo/rust_program_static/releases/download/continuous/rust-parallel-${{ runner.os }}-${{ runner.arch }}.tar.xz | tar vx --xz
+       cp ./mozjpegmm/bin/cjpeg .
+       docker build -f Dockerfile-jpg --tag builder .
+
+    - name: execute image processing program with alpine linux docker 
+      run: |
+        docker run --cidfile=builder.cid builder true
+        docker cp "$(cat builder.cid):work/artifact/." .
+
+    - name: Upload processing jpg image packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: image_jpg-${{ matrix.os }}
+        path: ./*.tar.xz
