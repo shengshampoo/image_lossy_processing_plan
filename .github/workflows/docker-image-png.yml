@@ -11,7 +11,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, ubuntu-24.04-arm]
-        images: [png, jpg]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -22,7 +21,7 @@ jobs:
        curl -sL https://github.com/shengshampoo/mozjpeg_program_static/releases/download/continuous/zopflimm-${{ runner.os }}-${{ runner.arch }}.tar.xz | tar vx --xz
        curl -sL https://github.com/shengshampoo/rust_program_static/releases/download/continuous/rust-parallel-${{ runner.os }}-${{ runner.arch }}.tar.xz | tar vx --xz
        cp ./zopflimm/bin/zopflipng .
-       docker build -f Dockerfile-${{ matrix.images }} --tag builder .
+       docker build -f Dockerfile-png --tag builder .
 
     - name: execute image processing program with alpine linux docker 
       run: |
