@@ -1,4 +1,4 @@
-name: Docker Image CI - X86_64/AARCH64 for Alpine Linux
+name: Docker Image CI To PNG - X86_64/AARCH64 for Alpine Linux
 
 on:
   # run it manually
